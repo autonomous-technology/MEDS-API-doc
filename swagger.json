@@ -38,6 +38,14 @@
       "description": "Corporate Actions"
     },
     {
+      "name": "exchange",
+      "description": "Exchange"
+    },
+    {
+      "name": "facts",
+      "description": "Facts"
+    },
+    {
       "name": "investment-calculator",
       "description": "Investment Calculator"
     },
@@ -535,6 +543,92 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/CorporateActionDto"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/exchange": {
+      "get": {
+        "tags": [
+          "exchange"
+        ],
+        "summary": "Get Exchanges",
+        "operationId": "getExchanges",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExchangeDto"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/facts-table/{id}": {
+      "get": {
+        "tags": [
+          "facts"
+        ],
+        "summary": "Get Facts Table",
+        "operationId": "getFactsTable",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of company",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CompanyFactDto"
               }
             }
           },
@@ -1097,6 +1191,65 @@
         }
       },
       "title": "ChartOfAccountsDto"
+    },
+    "CompanyFactDto": {
+      "type": "object",
+      "required": [
+        "name",
+        "name_ar",
+        "period",
+        "rowNumber",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Return on average equity (%)",
+          "description": "English name of company's fact"
+        },
+        "name_ar": {
+          "type": "string",
+          "example": "العائد على متوسط حقوق الملكية (%)",
+          "description": "Arabic name of company's fact"
+        },
+        "period": {
+          "type": "integer",
+          "format": "int32",
+          "example": 2017,
+          "description": "Period(year) of company's fact"
+        },
+        "restated": {
+          "type": "boolean",
+          "description": "Flag to indicate whether the company's fact restated or not. Defaults to false"
+        },
+        "rowNumber": {
+          "type": "integer",
+          "format": "int32",
+          "example": 9,
+          "description": "Row number which corresponds to the serial number of the fact of the company in the spreadsheet."
+        },
+        "scale": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1,
+          "description": "Scale of value. Defaults to 1"
+        },
+        "showDecimals": {
+          "type": "boolean",
+          "description": "Flag to indicate whether show decimal part or not. Defaults to false"
+        },
+        "value": {
+          "type": "number",
+          "example": -15.789,
+          "description": "Value of company's fact with a decimal part"
+        },
+        "valueSuffix": {
+          "type": "string",
+          "example": "%",
+          "description": "Suffix which use with value"
+        }
+      },
+      "title": "CompanyFactDto"
     },
     "CompanyListDto": {
       "type": "object",

@@ -1,0 +1,1374 @@
+swagger: '2.0'
+info:
+  description: MEDS Api Documentation
+  version: '1.0'
+  title: MEDS Api Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8081'
+basePath: /
+securityDefinitions:
+  meds_oauth:
+    type: oauth2
+    tokenUrl: 'http://localhost:8081/oauth/token'
+    flow: password
+tags:
+  - name: account-value
+    description: Account Value
+  - name: chart-of-accounts
+    description: Chart Of Accounts
+  - name: company
+    description: Company
+  - name: corporate-actions
+    description: Corporate Actions
+  - name: exchange
+    description: Exchange
+  - name: facts
+    description: Facts
+  - name: investment-calculator
+    description: Investment Calculator
+  - name: listing
+    description: Listing
+  - name: trade-data
+    description: Trade Data
+paths:
+  '/account-values/{id}':
+    get:
+      tags:
+        - account-value
+      summary: Get Account Values
+      operationId: getAccountValues
+      produces:
+        - '*/*'
+      parameters:
+        - name: accounts
+          in: query
+          description: List of account IDs separated by commas
+          required: false
+          type: string
+          allowEmptyValue: false
+        - name: id
+          in: path
+          description: ID of company
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AccountValueDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/account-values/{id}/accounts':
+    get:
+      tags:
+        - account-value
+      summary: Get Account Values in a hierarchical format
+      operationId: getAccountValuesHierarchical
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID of Company
+          required: true
+          type: string
+          format: uuid
+        - name: statementPeriod
+          in: query
+          description: Statement Period
+          required: false
+          type: string
+          enum:
+            - YEARLY
+            - SEMI_ANNUAL
+            - QUARTERLY
+        - name: statementType
+          in: query
+          description: Statement Type
+          required: false
+          type: string
+          enum:
+            - BALANCE_SHEET
+            - INCOME_STATEMENT
+            - CASH_FLOW
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CategoryDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/account-values/{id}/accounts/{accountId}':
+    get:
+      tags:
+        - account-value
+      summary: Get Children Account Values
+      operationId: getChildrenAccountValues
+      produces:
+        - '*/*'
+      parameters:
+        - name: accountId
+          in: path
+          description: ID of account (e.g. 02000000)
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: ID of Company
+          required: true
+          type: string
+          format: uuid
+        - name: statementPeriod
+          in: query
+          description: Statement Period
+          required: false
+          type: string
+          enum:
+            - YEARLY
+            - SEMI_ANNUAL
+            - QUARTERLY
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AccountValueDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/account-values/{id}/categories':
+    get:
+      tags:
+        - account-value
+      summary: Get Categories Account Values
+      operationId: getCategoriesAccountValues
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID of Company
+          required: true
+          type: string
+          format: uuid
+        - name: statementPeriod
+          in: query
+          description: Statement Period
+          required: false
+          type: string
+          enum:
+            - YEARLY
+            - SEMI_ANNUAL
+            - QUARTERLY
+        - name: statementType
+          in: query
+          description: Statement Type
+          required: false
+          type: string
+          enum:
+            - BALANCE_SHEET
+            - INCOME_STATEMENT
+            - CASH_FLOW
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AccountValueDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  /coa:
+    get:
+      tags:
+        - chart-of-accounts
+      summary: Get All Chart of Accounts
+      operationId: getAllCoA
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChartOfAccountsDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  /company/list:
+    get:
+      tags:
+        - company
+      summary: Get Company List
+      operationId: getCompanyList
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CompanyListDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/company/{id}':
+    get:
+      tags:
+        - company
+      summary: Get Company Metadata
+      operationId: getCompanyMetadataUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CompanyMetadataDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/corporate-actions/company/{id}':
+    get:
+      tags:
+        - corporate-actions
+      summary: Get Corporate Actions by Company
+      operationId: getCorporateActionsByCompany
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID of company
+          required: true
+          type: string
+          format: uuid
+        - name: page
+          in: query
+          description: Results page you want to retrieve (0..N)
+          required: false
+          type: integer
+          default: 0
+          format: int32
+        - name: size
+          in: query
+          description: Number of records per page
+          required: false
+          type: integer
+          default: 10
+          format: int32
+        - name: sort
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PageView%C2%ABCorporateActionDto%C2%BB'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/corporate-actions/{id}':
+    get:
+      tags:
+        - corporate-actions
+      summary: Get Corporate Actions
+      operationId: getCorporateActions
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID of company
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CorporateActionDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  /exchange:
+    get:
+      tags:
+        - exchange
+      summary: Get Exchanges
+      operationId: getExchanges
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ExchangeDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/facts-table/{id}':
+    get:
+      tags:
+        - facts
+      summary: Get Facts Table
+      operationId: getFactsTable
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID of company
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CompanyFactDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/investment/calculate/{id}':
+    get:
+      tags:
+        - investment-calculator
+      summary: Get Investment Calculation
+      operationId: getInvestmentCalculation
+      produces:
+        - '*/*'
+      parameters:
+        - name: cashInvested
+          in: query
+          description: >-
+            Amount of cash invested. It's required to input either this or
+            stocksInvested
+          required: false
+          type: number
+          x-example: 42
+        - name: currency
+          in: query
+          description: Currency to use for investment calculation. Defaults to QAR
+          required: false
+          type: string
+          enum:
+            - QAR
+            - USD
+        - name: endDate
+          in: query
+          description: End date of investment interval
+          required: true
+          type: string
+          format: date
+          x-example: '2020-01-01'
+        - name: id
+          in: path
+          description: ID of listing to calculate investment for
+          required: true
+          type: string
+          format: uuid
+        - name: reinvest
+          in: query
+          description: >-
+            Flag to indicate whether cash dividends should be reinvested or not.
+            Defaults to false
+          required: false
+          type: boolean
+          x-example: 'false'
+        - name: startDate
+          in: query
+          description: Start date of investment interval
+          required: true
+          type: string
+          format: date
+          x-example: '2019-01-01'
+        - name: stocksInvested
+          in: query
+          description: >-
+            Number of stocks invested. It's required to input either this or
+            cashInvested
+          required: false
+          type: integer
+          format: int32
+          x-example: 42
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/InvestmentCalculationResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  /investment/startDates:
+    get:
+      tags:
+        - investment-calculator
+      summary: Get Start Dates
+      operationId: getInvestmentStartDates
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ListingStartDate'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  /listing:
+    get:
+      tags:
+        - listing
+      summary: Get Listings
+      operationId: getListings
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ListingListDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/listing/{id}':
+    get:
+      tags:
+        - listing
+      summary: Get Listing by ID
+      operationId: getListingByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListingDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  /trade-data:
+    get:
+      tags:
+        - trade-data
+      summary: Get Latest
+      operationId: getLatestTradeData
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TradeDataDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+  '/trade-data/{id}':
+    get:
+      tags:
+        - trade-data
+      summary: Get Latest by Company
+      operationId: getLatestTradeDataByCompany
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: ID of company
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TradeDataDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
+definitions:
+  AccountDto:
+    type: object
+    properties:
+      medsCode:
+        type: string
+        example: 01010800
+        description: ID of canonical chart of account
+      name:
+        type: string
+        example: Investments in joint ventures
+        description: English name of canonical chart of account
+      arabicName:
+        type: string
+        example: استثمارات في مشاريع مشتركة
+        description: Arabic name of canonical chart of account
+      scale:
+        type: integer
+        format: int64
+        example: 1000
+        description: Scale of canonical chart of account
+      restated:
+        type: object
+        additionalProperties:
+          type: boolean
+        example:
+          Q1 2020: false
+      values:
+        type: object
+        additionalProperties:
+          type: number
+        example:
+          Q1 2020: 5519692
+    title: AccountDto
+  AccountValueDto:
+    type: object
+    properties:
+      arabicName:
+        type: string
+        example: حقوق الملكية
+        description: Arabic name of canonical chart of account
+      currency:
+        type: string
+        description: Exchange currency name on which the company is listed
+        enum:
+          - QAR
+          - USD
+      dataType:
+        type: string
+        example: Last day of the quarter
+        description: Type of account value data
+        enum:
+          - CUMULATIVE
+          - NON_CUMULATIVE
+          - LAST_DAY_OF_QUARTER
+      listingSymbol:
+        type: string
+        example: AKHI
+        description: Listing symbol of company
+      medsCode:
+        type: string
+        example: '02010000'
+        description: ID of canonical chart of account
+      name:
+        type: string
+        example: Total equity
+        description: English name of canonical chart of account
+      period:
+        type: string
+        example: Q1 2013
+        description: Period with year
+      restated:
+        type: boolean
+        description: Flag to indicate whether the value restated or not. Defaults to false
+      scale:
+        type: integer
+        format: int64
+        example: 1
+        description: Scale of canonical chart of account
+      value:
+        type: number
+        example: 557042389
+        description: Value of canonical chart of account
+    title: AccountValueDto
+  CategoryDto:
+    type: object
+    properties:
+      medsCode:
+        type: string
+        example: '01000000'
+        description: ID of canonical chart of account
+      name:
+        type: string
+        example: ASSETS
+        description: English name of canonical chart of account
+      arabicName:
+        type: string
+        example: الموجودات
+        description: Arabic name of canonical chart of account
+      scale:
+        type: integer
+        format: int64
+        example: 1000
+        description: Scale of canonical chart of account
+      restated:
+        type: object
+        additionalProperties:
+          type: boolean
+        example:
+          Q1 2020: false
+      values:
+        type: object
+        additionalProperties:
+          type: number
+        example:
+          Q1 2020: 123
+      subcategories:
+        type: array
+        items:
+          $ref: '#/definitions/SubcategoryDto'
+    title: CategoryDto
+  SubcategoryDto:
+    type: object
+    properties:
+      medsCode:
+        type: string
+        example: '01010000'
+        description: ID of canonical chart of account
+      name:
+        type: string
+        example: Non-Current assets
+        description: English name of canonical chart of account
+      arabicName:
+        type: string
+        example: الموجودات غير المتداولة
+        description: Arabic name of canonical chart of account
+      scale:
+        type: integer
+        format: int64
+        example: 1000
+        description: Scale of canonical chart of account
+      restated:
+        type: object
+        additionalProperties:
+          type: boolean
+        example:
+          Q1 2020: false
+      values:
+        type: object
+        additionalProperties:
+          type: number
+        example:
+          Q1 2020: 5519692
+      accounts:
+        type: array
+        items:
+          $ref: '#/definitions/AccountDto'
+    title: SubcategoryDto
+  ChartOfAccountsDto:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 03280000
+        description: ID of chart of accounts (meds code)
+      industryRestriction:
+        type: string
+        example: Banks & Financial Services
+        description: Industry restriction for the chart of accounts
+      name:
+        type: string
+        example: Interest income
+        description: English name of chart of accounts
+      name_ar:
+        type: string
+        example: إيرادات الفوائد
+        description: Arabic name of chart of accounts
+    title: ChartOfAccountsDto
+  CompanyFactDto:
+    type: object
+    required:
+      - name
+      - name_ar
+      - period
+      - rowNumber
+      - value
+    properties:
+      name:
+        type: string
+        example: Return on average equity (%)
+        description: English name of company's fact
+      name_ar:
+        type: string
+        example: العائد على متوسط حقوق الملكية (%)
+        description: Arabic name of company's fact
+      period:
+        type: integer
+        format: int32
+        example: 2017
+        description: Period(year) of company's fact
+      restated:
+        type: boolean
+        description: >-
+          Flag to indicate whether the company's fact restated or not. Defaults
+          to false
+      rowNumber:
+        type: integer
+        format: int32
+        example: 9
+        description: >-
+          Row number which corresponds to the serial number of the fact of the
+          company in the spreadsheet.
+      scale:
+        type: integer
+        format: int64
+        example: 1
+        description: Scale of value. Defaults to 1
+      showDecimals:
+        type: boolean
+        description: Flag to indicate whether show decimal part or not. Defaults to false
+      value:
+        type: number
+        example: -15.789
+        description: Value of company's fact with a decimal part
+      valueSuffix:
+        type: string
+        example: '%'
+        description: Suffix which use with value
+    title: CompanyFactDto
+  CompanyListDto:
+    type: object
+    required:
+      - id
+      - name
+      - name_ar
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: 5c8774e7-7126-4bb0-8b47-77ed85804a39
+        description: ID of company
+      name:
+        type: string
+        example: Qatar National Bank
+        description: English name of company
+      name_ar:
+        type: string
+        example: بنك قطر الوطني
+        description: Arabic name of company
+      defaultSort:
+        type: integer
+        format: int32
+        example: 1
+        description: The order of displaying the company in the list
+      industry:
+        type: string
+        example: Banks & Financial Services
+        description: Company industry in English
+      industry_ar:
+        type: string
+        example: البنوك و الخدمات المالية
+        description: Company industry in Arabic
+      symbol:
+        type: string
+        example: QNBK
+        description: Symbol of the company
+    title: CompanyListDto
+  CompanyMetadataDto:
+    type: object
+    required:
+      - id
+      - name
+      - name_ar
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: 5c8774e7-7126-4bb0-8b47-77ed85804a39
+        description: ID of company
+      name:
+        type: string
+        example: Qatar National Bank
+        description: English name of company
+      name_ar:
+        type: string
+        example: بنك قطر الوطني
+        description: Arabic name of company
+      defaultSort:
+        type: integer
+        format: int32
+        example: 1
+        description: The order of displaying the company in the list
+      description:
+        type: string
+        example: Qatar National Bank (Q.P.S.C.) (QNB Group) was established in 1964...
+        description: Company description in English
+      description_ar:
+        type: string
+        example: >-
+          تأسس بنك قطر الوطني (مجموعة QNB – شركة مساهمة عامة قطرية) في عام
+          1964...
+        description: Company description in Arabic
+      industry:
+        type: string
+        example: Banks & Financial Services
+        description: Company industry in English
+      industry_ar:
+        type: string
+        example: البنوك و الخدمات المالية
+        description: Company industry in Arabic
+      isin:
+        type: string
+        example: QA0006929895
+        description: ISIN code of company
+      listings:
+        type: array
+        items:
+          $ref: '#/definitions/CompanyMetadataListingDto'
+    title: CompanyMetadataDto
+  CompanyMetadataListingDto:
+    type: object
+    required:
+      - symbol
+    properties:
+      exchange:
+        $ref: '#/definitions/ExchangeDto'
+      symbol:
+        type: string
+        example: QNBK
+        description: Listing symbol of the company for this exchange
+    title: CompanyMetadataListingDto
+  CorporateActionDto:
+    type: object
+    required:
+      - annualGeneralAssemblyMeetingDate
+      - boardMeetingDate
+      - cutoffDate
+      - payDate
+    properties:
+      annualGeneralAssemblyMeetingDate:
+        type: string
+        format: date
+        example: '2020-04-05'
+        description: Annual general assembly meeting date
+      averageStockPrice:
+        type: number
+        example: 2.981
+        description: Average stock price for the year of assembly meeting date
+      boardMeetingDate:
+        type: string
+        format: date
+        example: '2020-01-12'
+        description: Board meeting date
+      cashDividend:
+        type: number
+        example: 5.00%
+        description: Cash dividends in percentage. Defaults to zero
+      cutoffDate:
+        type: string
+        format: date
+        example: '2020-04-05'
+        description: Cutoff date
+      documentUrl:
+        type: string
+        example: 'https:/qse.com/document?id=1'
+        description: URL of document
+      id:
+        type: string
+        format: uuid
+        example: eb6e7203-4fbd-49c0-98dd-aafa743d17b3
+        description: ID of corporate action
+      note:
+        type: string
+        example: The Extraordinary General Assembly of the Bank was held on...
+        description: Note in English
+      note_ar:
+        type: string
+        example: انعقدت الجمعية العامة غير العادية للبنك في...
+        description: Note in Arabic
+      payDate:
+        type: string
+        format: date
+        example: '2020-04-05'
+        description: Pay date
+      principalValue:
+        type: number
+        example: 1
+        description: Principal value
+      stockDividend:
+        type: number
+        example: 1.00%
+        description: Stock dividends in percentage. Defaults to zero
+    title: CorporateActionDto
+  DayValueDto:
+    type: object
+    properties:
+      date:
+        type: string
+        format: date
+        example: '2019-02-01'
+      stocks:
+        type: integer
+        format: int32
+        example: 1
+      stockPrice:
+        type: number
+        example: 20.6
+      stocksValue:
+        type: number
+        example: 20.6
+      cash:
+        type: number
+        example: 1
+      totalValue:
+        type: number
+        example: 21.6
+    title: DayValueDto
+  ExchangeDto:
+    type: object
+    required:
+      - alphaCode
+      - currency
+      - symbol
+    properties:
+      alphaCode:
+        type: string
+        example: QAT
+        description: alpha-2 or alpha-3 country code of this exchange
+      countryName:
+        type: string
+        example: Qatar
+        description: Country of the exchange where the company is listed
+      currency:
+        type: string
+        description: Currency of exchange
+        enum:
+          - QAR
+          - USD
+      name:
+        type: string
+        example: Qatar Stock Exchange
+        description: Name of exchange
+      symbol:
+        type: string
+        example: QSE
+        description: Symbol of exchange
+    title: ExchangeDto
+  InvestmentCalculationResponseDto:
+    type: object
+    required:
+      - endDate
+      - startDate
+    properties:
+      startDate:
+        type: string
+        format: date
+        example: '2019-01-01'
+        description: Start date of investment interval
+      endDate:
+        type: string
+        format: date
+        example: '2020-01-01'
+        description: End date of investment interval
+      stocksInvested:
+        type: integer
+        format: int32
+        example: 1
+        description: >-
+          Number of stocks invested. It's required to input either this or
+          cashInvested
+      cashInvested:
+        type: number
+        example: 22
+        description: >-
+          Amount of cash invested. It's required to input either this or
+          stocksInvested
+      reinvest:
+        type: boolean
+        example: false
+        description: >-
+          Flag to indicate whether cash dividends should be reinvested or not.
+          Defaults to false
+      currency:
+        type: string
+        enum:
+          - QAR
+          - USD
+      annualizedChange:
+        type: string
+        description: Annualized change in value of shares
+        example: 15.64%
+      annualizedTotalChange:
+        type: string
+        description: Annualized change in investment value (stocks+cash)
+        example: 21.22%
+      change:
+        type: number
+        description: Amount of change in value of shares
+        example: 3.3
+      changePercentage:
+        type: string
+        description: Percentage of change in value of shares
+        example: 15.00%
+      finalCash:
+        type: number
+        description: Total cash held at end of investment interval
+        example: 1
+      finalStocks:
+        type: integer
+        format: int32
+        description: Number of stocks at end of investment interval
+        example: 10
+      finalStocksValue:
+        type: number
+        description: Value of shares held at end of investment interval
+        example: 25.3
+      finalTotalValue:
+        type: number
+        description: Total value of investment (stocks+cash)
+        example: 26.3
+      totalChange:
+        type: number
+        description: Amount of change in investment value (stocks+cash)
+        example: 4.3
+      totalChangePercentage:
+        type: string
+        description: Percentage of change in investment value (stocks+cash)
+        example: 19.55%
+      dayValues:
+        type: array
+        items:
+          $ref: '#/definitions/DayValueDto'
+    title: InvestmentCalculationResponseDto
+  ListingDto:
+    type: object
+    required:
+      - companyId
+      - exchangeSymbol
+      - symbol
+    properties:
+      companyId:
+        type: string
+        format: uuid
+        example: 5c8774e7-7126-4bb0-8b47-77ed85804a39
+        description: ID of a company which listed
+      exchangeSymbol:
+        type: string
+        example: QSE
+        description: Symbol of exchange
+      id:
+        type: string
+        format: uuid
+        example: ab2155fc-25cb-4753-af6e-73f1e49dd72f
+        description: ID of listing. Not used for creating (should be empty)
+      symbol:
+        type: string
+        example: AHCS
+        description: Symbol of listing
+    title: ListingDto
+  ListingListDto:
+    type: object
+    properties:
+      companyName:
+        type: string
+        example: Aamal
+        description: Name of a company which listed
+      exchangeName:
+        type: string
+        example: QSE
+        description: Name of exchange
+      id:
+        type: string
+        format: uuid
+        example: ab2155fc-25cb-4753-af6e-73f1e49dd72f
+        description: ID of listing
+      symbol:
+        type: string
+        example: AHCS
+        description: Symbol of listing
+    title: ListingListDto
+  ListingStartDate:
+    type: object
+    properties:
+      listingId:
+        type: string
+        format: uuid
+      startDate:
+        type: string
+        format: date
+    title: ListingStartDate
+  PageView«CorporateActionDto»:
+    type: object
+    properties:
+      content:
+        type: array
+        description: The list of returned objects
+        items:
+          $ref: '#/definitions/CorporateActionDto'
+      firstPage:
+        type: boolean
+        example: true
+        description: Flag to indicate if the current page is the first
+      lastPage:
+        type: boolean
+        example: false
+        description: Flag to indicate if the current page is the last
+      numberOfElements:
+        type: integer
+        format: int32
+        example: 10
+        description: Number of elements on the current page
+      pageNumber:
+        type: integer
+        format: int32
+        example: 0
+        description: Current page number. Starts at 0. Same as 'page' in the request
+      pageSize:
+        type: integer
+        format: int32
+        example: 10
+        description: The number of elements on the page. Same as 'size' in the request
+      totalElements:
+        type: integer
+        format: int64
+        example: 100
+        description: Total elements by current criteria
+      totalPages:
+        type: integer
+        format: int32
+        example: 10
+        description: Total number of pages by current criteria
+    title: PageView«CorporateActionDto»
+  TradeDataDto:
+    type: object
+    required:
+      - market
+    properties:
+      bid_price:
+        type: number
+        example: 19.6
+        description: The maximum price that a buyer was willing to pay for a share of stock
+      bid_volume:
+        type: integer
+        format: int64
+        example: 10
+        description: >-
+          The total amount of transactions occurring on the Bid in a given
+          interval
+      change:
+        type: number
+        example: 0.25
+        description: Amount of change in value of shares
+      change_percentage:
+        type: number
+        example: 1.282
+        description: Percentage of change in value of shares
+      current_price:
+        type: number
+        example: 19.75
+        description: The most recent selling price of a stock
+      date:
+        type: string
+        format: date
+        example: '2020-08-11'
+        description: Date of trade data
+      high_price:
+        type: number
+        example: 19.8
+        description: >-
+          The highest price at which a stock traded during the course of the
+          trading day
+      low_price:
+        type: number
+        example: 19.29
+        description: >-
+          The lowest price at which a stock traded during the course of the
+          trading day
+      market:
+        type: string
+        example: QSE
+      market_cap:
+        type: number
+        example: 3950000000
+        description: >-
+          The total dollar market value of a company's outstanding shares of
+          stock
+      offer_price:
+        type: number
+        example: 19.75
+        description: The price which is based on the company's legitimate prospects
+      offer_volume:
+        type: integer
+        format: int64
+        example: 11189
+        description: The total amount of transactions occurring on the offer price
+      open_price:
+        type: number
+        example: 19.5
+        description: The price at which started trading
+      previous_close_price:
+        type: number
+        example: 19.5
+        description: The prior day's final price
+      stat_time:
+        type: string
+        format: date-time
+        description: Timestamp when trade data collected
+      symbol:
+        type: string
+        example: MERS
+        description: Listing symbol of company
+      trades:
+        type: integer
+        format: int64
+        example: 69
+        description: The total number of trades
+      trend_type:
+        type: string
+        description: Trend type
+        enum:
+          - UP
+          - DOWN
+          - FLAT
+      value_traded:
+        type: number
+        example: 3891576.57
+        description: The total value of traded shares
+      volume_traded:
+        type: integer
+        format: int64
+        example: 199579
+        description: The total amount of traded shares
+      week_52_high:
+        type: number
+        example: 19.9
+        description: The highest price at which shares has traded for one year
+      week_52_low:
+        type: number
+        example: 14
+        description: The lowest price at which shares has traded for one year
+    title: TradeDataDto
