@@ -11,12 +11,12 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }
   },
-  "host": "localhost:8081",
+  "host": "test.api.meds.atnmo.com",
   "basePath": "/",
   "securityDefinitions": {
     "meds_oauth": {
       "type": "oauth2",
-      "tokenUrl": "http://localhost:8081/oauth/token",
+      "tokenUrl": "http://test.api.meds.atnmo.com/oauth/token",
       "flow": "password"
     }
   },
@@ -52,6 +52,10 @@
     {
       "name": "listing",
       "description": "Listing"
+    },
+    {
+      "name": "news-feed",
+      "description": "News Feed"
     },
     {
       "name": "trade-data",
@@ -870,6 +874,250 @@
         "deprecated": false
       }
     },
+    "/news-feed/categories": {
+      "get": {
+        "tags": [
+          "news-feed"
+        ],
+        "summary": "Get Categories",
+        "operationId": "getNewsFeedCategories",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "company",
+            "in": "query",
+            "description": "ID of company used to filter categories by existing news-items",
+            "required": false,
+            "type": "string",
+            "format": "uuid",
+            "allowEmptyValue": false
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "Language used to filter categories by existing news-items",
+            "required": false,
+            "type": "string",
+            "allowEmptyValue": false,
+            "enum": [
+              "ENGLISH",
+              "ARABIC"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NewsItemCategoryDto"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/news-feed/companies": {
+      "get": {
+        "tags": [
+          "news-feed"
+        ],
+        "summary": "Get Companies",
+        "operationId": "getNewsFeedCompanies",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "description": "ID of category used to filter companies by existing news-items",
+            "required": false,
+            "type": "string",
+            "format": "uuid",
+            "allowEmptyValue": false
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "Language used to filter companies by existing news-items",
+            "required": false,
+            "type": "string",
+            "allowEmptyValue": false,
+            "enum": [
+              "ENGLISH",
+              "ARABIC"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CompanyNewsFeedDto"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/news-feed/filter": {
+      "get": {
+        "tags": [
+          "news-feed"
+        ],
+        "summary": "Get All News Items",
+        "operationId": "getAllNewsItemsBy",
+        "produces": [
+          "*/*"
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "description": "ID of News item category to filter results by",
+            "required": false,
+            "type": "string",
+            "format": "uuid",
+            "x-example": "aff55965-c386-49a6-91c9-6097e874eb14"
+          },
+          {
+            "name": "company",
+            "in": "query",
+            "description": "ID of company to filter results by",
+            "required": false,
+            "type": "string",
+            "format": "uuid",
+            "x-example": "1fb8e9ff-0203-473a-a64c-e8c369fca3a0"
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "description": "News item's language. Defaults to ENGLISH",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "ENGLISH",
+              "ARABIC"
+            ]
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Results page you want to retrieve (0..N)",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int32"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of records per page",
+            "required": false,
+            "type": "integer",
+            "default": 12,
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/PageView%C2%ABNewsFeedListDto%C2%BB"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/news-feed/listings": {
+      "get": {
+        "tags": [
+          "news-feed"
+        ],
+        "summary": "getListings",
+        "operationId": "getListingsUsingGET_1",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CompanyListingView"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
     "/trade-data": {
       "get": {
         "tags": [
@@ -933,6 +1181,44 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/TradeDataDto"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "meds_oauth": []
+          }
+        ],
+        "deprecated": false
+      }
+    },
+    "/trade-data/view": {
+      "get": {
+        "tags": [
+          "trade-data"
+        ],
+        "summary": "Get Latest for each Listing",
+        "operationId": "getTradeDataView",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TradeDataDto"
+              }
             }
           },
           "401": {
@@ -1883,6 +2169,259 @@
         }
       },
       "title": "TradeDataDto"
+    },
+    "NewsItemCategoryDto": {
+      "type": "object",
+      "required": [
+        "name",
+        "name_ar"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0e6880b5-2b83-488b-99c4-e06ea70ef1ac",
+          "description": "ID news item category. Not used for creating (should be empty), mandatory when updating"
+        },
+        "name": {
+          "type": "string",
+          "example": "Dividend payment",
+          "description": "English name of this news item category"
+        },
+        "name_ar": {
+          "type": "string",
+          "example": "توزيعات الأرباح",
+          "description": "Arabic name of this news item category"
+        },
+        "readOnly": {
+          "type": "boolean",
+          "description": "Field indicating whether this news category can be edited or not. This field is read-only"
+        }
+      },
+      "title": "NewsItemCategoryDto"
+    },
+    "CompanyNewsFeedDto": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "name_ar"
+      ],
+      "properties": {
+        "arabicLabel": {
+          "type": "string",
+          "example": "بنك قطر الوطني (QSE.QNBK)",
+          "description": "Arabic label of company with listings"
+        },
+        "defaultSort": {
+          "type": "integer",
+          "format": "int32",
+          "example": 1,
+          "description": "The order of displaying the company in the list"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "5c8774e7-7126-4bb0-8b47-77ed85804a39",
+          "description": "ID of company"
+        },
+        "industry": {
+          "type": "string",
+          "example": "Banks & Financial Services",
+          "description": "Company industry in English"
+        },
+        "industry_ar": {
+          "type": "string",
+          "example": "البنوك و الخدمات المالية",
+          "description": "Company industry in Arabic"
+        },
+        "label": {
+          "type": "string",
+          "example": "Qatar National Bank (QSE.QNBK)",
+          "description": "English label of company with listings"
+        },
+        "listings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CompanyNewsFeedDto.ListingDto"
+          }
+        },
+        "name": {
+          "type": "string",
+          "example": "Qatar National Bank",
+          "description": "English name of company"
+        },
+        "name_ar": {
+          "type": "string",
+          "example": "بنك قطر الوطني",
+          "description": "Arabic name of company"
+        }
+      },
+      "title": "CompanyNewsFeedDto"
+    },
+    "CompanyNewsFeedDto.ListingDto": {
+      "type": "object",
+      "properties": {
+        "exchange": {
+          "type": "string",
+          "example": "QSE",
+          "description": "Symbol of exchange"
+        },
+        "listingSymbol": {
+          "type": "string",
+          "example": "QNBK",
+          "description": "Symbol of listing"
+        }
+      },
+      "title": "CompanyNewsFeedDto.ListingDto"
+    },
+    "NewsFeedListDto": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "example": [
+            "Appointments",
+            "Financial disclosure"
+          ],
+          "description": "List of news items categories",
+          "items": {
+            "type": "string"
+          }
+        },
+        "featuredImageUrl": {
+          "type": "string",
+          "example": "http://at.com/image.png",
+          "description": "Featured image URL"
+        },
+        "headline": {
+          "type": "string",
+          "example": "SHARES SPLIT OF QFBQ",
+          "description": "Headline of news item"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "e2ac141b-af91-4d5e-a5fc-96589c77a30e",
+          "description": "News item's ID"
+        },
+        "language": {
+          "type": "string",
+          "description": "News item's language",
+          "enum": [
+            "ENGLISH",
+            "ARABIC"
+          ]
+        },
+        "month": {
+          "type": "string",
+          "example": 10,
+          "description": "Month in which News item was published"
+        },
+        "published": {
+          "type": "string",
+          "format": "date",
+          "example": "2020-07-22",
+          "description": "Published date"
+        },
+        "year": {
+          "type": "string",
+          "example": 2019,
+          "description": "Year in which News item was published"
+        }
+      },
+      "title": "NewsFeedListDto"
+    },
+    "PageView«NewsFeedListDto»": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "array",
+          "description": "The list of returned objects",
+          "items": {
+            "$ref": "#/definitions/NewsFeedListDto"
+          }
+        },
+        "firstPage": {
+          "type": "boolean",
+          "example": true,
+          "description": "Flag to indicate if the current page is the first"
+        },
+        "lastPage": {
+          "type": "boolean",
+          "example": false,
+          "description": "Flag to indicate if the current page is the last"
+        },
+        "numberOfElements": {
+          "type": "integer",
+          "format": "int32",
+          "example": 10,
+          "description": "Number of elements on the current page"
+        },
+        "pageNumber": {
+          "type": "integer",
+          "format": "int32",
+          "example": 0,
+          "description": "Current page number. Starts at 0. Same as 'page' in the request"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32",
+          "example": 10,
+          "description": "The number of elements on the page. Same as 'size' in the request"
+        },
+        "totalElements": {
+          "type": "integer",
+          "format": "int64",
+          "example": 100,
+          "description": "Total elements by current criteria"
+        },
+        "totalPages": {
+          "type": "integer",
+          "format": "int32",
+          "example": 10,
+          "description": "Total number of pages by current criteria"
+        }
+      },
+      "title": "PageView«NewsFeedListDto»"
+    },
+    "CompanyListingView": {
+      "type": "object",
+      "properties": {
+        "companyId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "5c8774e7-7126-4bb0-8b47-77ed85804a39",
+          "description": "ID of company"
+        },
+        "exchangeSymbol": {
+          "type": "string",
+          "example": "QSE",
+          "description": "Symbol of the exchange where the company is listed. If the company has not any listing, the value will be null"
+        },
+        "listingId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "679ce40e-3bd2-4c02-8964-06a0a9db4123",
+          "description": "ID of company listing. If the company has not any listing, the value will be null"
+        },
+        "listingSymbol": {
+          "type": "string",
+          "example": "QNBK",
+          "description": "Listing symbol of the company. If the company has not any listing, the value will be null"
+        },
+        "name": {
+          "type": "string",
+          "example": "Qatar National Bank",
+          "description": "English name of company"
+        },
+        "name_ar": {
+          "type": "string",
+          "example": "بنك قطر الوطني",
+          "description": "Arabic name of company"
+        }
+      },
+      "title": "CompanyListingView"
     }
   }
 }
