@@ -8,7 +8,7 @@
     "contact": {},
     "license": {
       "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
     }
   },
   "host": "test.api.meds.atnmo.com",
@@ -16,7 +16,7 @@
   "securityDefinitions": {
     "meds_oauth": {
       "type": "oauth2",
-      "tokenUrl": "http://test.api.meds.atnmo.com/oauth/token",
+      "tokenUrl": "https://test.api.meds.atnmo.com/oauth/token",
       "flow": "password"
     }
   },
