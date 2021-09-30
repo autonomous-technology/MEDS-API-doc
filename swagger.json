@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "MEDS Api Documentation",
+    "description": "Sahmik Api Documentation",
     "version": "1.0",
-    "title": "MEDS Api Documentation",
+    "title": "Sahmik Api Documentation",
     "termsOfService": "urn:tos",
     "contact": {},
     "license": {
@@ -130,6 +130,18 @@
           "*/*"
         ],
         "parameters": [
+          {
+            "name": "dataType",
+            "in": "query",
+            "description": "Data Type of a financial value",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "CUMULATIVE",
+              "NON_CUMULATIVE",
+              "LAST_DAY_OF_QUARTER"
+            ]
+          },
           {
             "name": "id",
             "in": "path",
@@ -681,7 +693,10 @@
             "type": "string",
             "enum": [
               "QAR",
-              "USD"
+              "USD",
+              "AED",
+              "SAR",
+              "KWD"
             ]
           },
           {
@@ -1299,7 +1314,10 @@
           "description": "Exchange currency name on which the company is listed",
           "enum": [
             "QAR",
-            "USD"
+            "USD",
+            "AED",
+            "SAR",
+            "KWD"
           ]
         },
         "dataType": {
@@ -1624,6 +1642,16 @@
           "type": "string",
           "example": "تأسس بنك قطر الوطني (مجموعة QNB – شركة مساهمة عامة قطرية) في عام 1964...",
           "description": "Company description in Arabic"
+        },
+        "descriptionSahmik": {
+          "type": "string",
+          "example": "Qatar National Bank (Q.P.S.C.) (QNB Group) was established in 1964...",
+          "description": "Company description for Sahmik in English"
+        },
+        "descriptionSahmik_ar": {
+          "type": "string",
+          "example": "تأسس بنك قطر الوطني (مجموعة QNB – شركة مساهمة عامة قطرية) في عام 1964...",
+          "description": "Company description for Sahmik in Arabic"
         },
         "industry": {
           "type": "string",
