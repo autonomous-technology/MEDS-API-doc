@@ -1133,6 +1133,37 @@
         "deprecated": false
       }
     },
+    "/news-item/{id}": {
+      "get": {
+        "tags": [
+          "news-feed"
+        ],
+        "summary":"getNewsItem",
+        "operationId":"getNewsItemUsingGET",
+        "produces": ["*/*"],
+        "parameters": [
+          {
+            "name":"id",
+            "in":"path",
+            "description":"id",
+            "required":true,
+            "type":"string",
+            "format":"uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description":"OK",
+            "schema": {
+              "$ref":"#/definitions/NewsItemDto"
+            }
+          },
+          "401":{"description":"Unauthorized"},
+          "403":{"description":"Forbidden"},
+          "404":{"description":"Not Found"}
+        },
+        "security":[{"spring_oauth":[]}],"deprecated":false}
+    },
     "/trade-data": {
       "get": {
         "tags": [
@@ -2412,6 +2443,98 @@
         }
       },
       "title": "PageView«NewsFeedListDto»"
+    },
+    "NewsItemDto": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "discriminator": "type",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "example": [
+            "9794d1f2-1a84-419c-a149-51d05f70051d"
+          ],
+          "description": "News item categories' IDs",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time when the news item was created. This value is read-only and is not used while creating/updating news item"
+        },
+        "createdBy": {
+          "type": "string",
+          "example": "John Smith",
+          "description": "Full name of user who created news item. This value is read-only and is not used while creating/updating news item"
+        },
+        "featuredImageUrl": {
+          "type": "string",
+          "example": "http://at.com/image.png",
+          "description": "Featured image URL for the news item"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "ed33f75a-50d0-40a6-a90c-163738292d41",
+          "description": "News item's ID. Not used for creating (should be empty)"
+        },
+        "modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time when the news item was last modified. This value is read-only and is not used while creating/updating news item"
+        },
+        "modifiedBy": {
+          "type": "string",
+          "example": "John Doe",
+          "description": "Full name of user who last modified this news item. This value is read-only and is not used while creating/updating news item"
+        },
+        "published": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time when the news item was published. If the status is not PUBLISHED it will be null. This value is read-only and is not used while creating/updating news item"
+        },
+        "publishedBy": {
+          "type": "string",
+          "example": "Jane Doe",
+          "description": "Full name of user who published news item. If the status is not PUBLISHED it will be null. This value is read-only and is not used while creating/updating news item"
+        },
+        "publishedDisplay": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2020-09-07T09:48:52.321Z",
+          "description": "The time to show as published for this news item. If the status is not PUBLISHED it will be null, regardless of timestamp sent. If not sent, published timestamp will be used"
+        },
+        "status": {
+          "type": "string",
+          "example": "PUBLISHED",
+          "description": "News item's status",
+          "enum": [
+            "DRAFT",
+            "READY_FOR_REVIEW",
+            "PUBLISHED"
+          ]
+        },
+        "thumbnailUrl": {
+          "type": "string",
+          "example": "http://at.com/thumbnail.png",
+          "description": "Thumbnail URL for the news item"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ARTICLE",
+            "EXTERNAL_ARTICLE",
+            "CORPORATE_NEWS",
+            "PRESS_RELEASE"
+          ]
+        }
+      },
+      "title": "NewsItemDto"
     },
     "CompanyListingView": {
       "type": "object",

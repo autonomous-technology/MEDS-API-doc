@@ -3,17 +3,17 @@ info:
   description: Sahmik Api Documentation
   version: '1.0'
   title: Sahmik Api Documentation
-  termsOfService: 'urn:tos'
+  termsOfService: urn:tos
   contact: {}
   license:
     name: Apache 2.0
-    url: 'https://www.apache.org/licenses/LICENSE-2.0'
-host: 'api.meds.atnmo.com'
+    url: https://www.apache.org/licenses/LICENSE-2.0
+host: api.meds.atnmo.com
 basePath: /
 securityDefinitions:
   meds_oauth:
     type: oauth2
-    tokenUrl: 'https://api.meds.atnmo.com/login'
+    tokenUrl: https://api.meds.atnmo.com/login
     flow: password
 tags:
   - name: account-value
@@ -37,7 +37,7 @@ tags:
   - name: trade-data
     description: Trade Data
 paths:
-  '/account-values/{id}':
+  /account-values/{id}:
     get:
       tags:
         - account-value
@@ -74,7 +74,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/account-values/{id}/accounts':
+  /account-values/{id}/accounts:
     get:
       tags:
         - account-value
@@ -83,6 +83,15 @@ paths:
       produces:
         - '*/*'
       parameters:
+        - name: dataType
+          in: query
+          description: Data Type of a financial value
+          required: false
+          type: string
+          enum:
+            - CUMULATIVE
+            - NON_CUMULATIVE
+            - LAST_DAY_OF_QUARTER
         - name: id
           in: path
           description: ID of Company
@@ -123,7 +132,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/account-values/{id}/accounts/{accountId}':
+  /account-values/{id}/accounts/{accountId}:
     get:
       tags:
         - account-value
@@ -168,7 +177,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/account-values/{id}/categories':
+  /account-values/{id}/categories:
     get:
       tags:
         - account-value
@@ -265,7 +274,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/company/{id}':
+  /company/{id}:
     get:
       tags:
         - company
@@ -294,7 +303,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/corporate-actions/company/{id}':
+  /corporate-actions/company/{id}:
     get:
       tags:
         - corporate-actions
@@ -341,7 +350,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/corporate-actions/{id}':
+  /corporate-actions/{id}:
     get:
       tags:
         - corporate-actions
@@ -396,7 +405,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/facts-table/{id}':
+  /facts-table/{id}:
     get:
       tags:
         - facts
@@ -427,7 +436,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/investment/calculate/{id}':
+  /investment/calculate/{id}:
     get:
       tags:
         - investment-calculator
@@ -438,9 +447,7 @@ paths:
       parameters:
         - name: cashInvested
           in: query
-          description: >-
-            Amount of cash invested. It's required to input either this or
-            stocksInvested
+          description: Amount of cash invested. It's required to input either this or stocksInvested
           required: false
           type: number
           x-example: 42
@@ -452,6 +459,9 @@ paths:
           enum:
             - QAR
             - USD
+            - AED
+            - SAR
+            - KWD
         - name: endDate
           in: query
           description: End date of investment interval
@@ -467,9 +477,7 @@ paths:
           format: uuid
         - name: reinvest
           in: query
-          description: >-
-            Flag to indicate whether cash dividends should be reinvested or not.
-            Defaults to false
+          description: Flag to indicate whether cash dividends should be reinvested or not. Defaults to false
           required: false
           type: boolean
           x-example: 'false'
@@ -482,9 +490,7 @@ paths:
           x-example: '2019-01-01'
         - name: stocksInvested
           in: query
-          description: >-
-            Number of stocks invested. It's required to input either this or
-            cashInvested
+          description: Number of stocks invested. It's required to input either this or cashInvested
           required: false
           type: integer
           format: int32
@@ -551,7 +557,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/listing/{id}':
+  /listing/{id}:
     get:
       tags:
         - listing
@@ -745,6 +751,35 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
+  /news-item/{id}:
+    get:
+      tags:
+        - news-feed
+      summary: getNewsItem
+      operationId: getNewsItemUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/NewsItemDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - meds_oauth: []
+      deprecated: false
   /trade-data:
     get:
       tags:
@@ -769,7 +804,7 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
-  '/trade-data/{id}':
+  /trade-data/{id}:
     get:
       tags:
         - trade-data
@@ -828,7 +863,7 @@ definitions:
     properties:
       medsCode:
         type: string
-        example: 01010800
+        example: '01010800'
         description: ID of canonical chart of account
       name:
         type: string
@@ -869,6 +904,9 @@ definitions:
         enum:
           - QAR
           - USD
+          - AED
+          - SAR
+          - KWD
       dataType:
         type: string
         example: Last day of the quarter
@@ -985,7 +1023,7 @@ definitions:
     properties:
       id:
         type: string
-        example: 03280000
+        example: '03280000'
         description: ID of chart of accounts (meds code)
       industryRestriction:
         type: string
@@ -1024,16 +1062,12 @@ definitions:
         description: Period(year) of company's fact
       restated:
         type: boolean
-        description: >-
-          Flag to indicate whether the company's fact restated or not. Defaults
-          to false
+        description: Flag to indicate whether the company's fact restated or not. Defaults to false
       rowNumber:
         type: integer
         format: int32
         example: 9
-        description: >-
-          Row number which corresponds to the serial number of the fact of the
-          company in the spreadsheet.
+        description: Row number which corresponds to the serial number of the fact of the company in the spreadsheet.
       scale:
         type: integer
         format: int64
@@ -1120,10 +1154,16 @@ definitions:
         description: Company description in English
       description_ar:
         type: string
-        example: >-
-          تأسس بنك قطر الوطني (مجموعة QNB – شركة مساهمة عامة قطرية) في عام
-          1964...
+        example: تأسس بنك قطر الوطني (مجموعة QNB – شركة مساهمة عامة قطرية) في عام 1964...
         description: Company description in Arabic
+      descriptionSahmik:
+        type: string
+        example: Qatar National Bank (Q.P.S.C.) (QNB Group) was established in 1964...
+        description: Company description for Sahmik in English
+      descriptionSahmik_ar:
+        type: string
+        example: تأسس بنك قطر الوطني (مجموعة QNB – شركة مساهمة عامة قطرية) في عام 1964...
+        description: Company description for Sahmik in Arabic
       industry:
         type: string
         example: Banks & Financial Services
@@ -1186,7 +1226,7 @@ definitions:
         description: Cutoff date
       documentUrl:
         type: string
-        example: 'https:/qse.com/document?id=1'
+        example: https:/qse.com/document?id=1
         description: URL of document
       id:
         type: string
@@ -1289,21 +1329,15 @@ definitions:
         type: integer
         format: int32
         example: 1
-        description: >-
-          Number of stocks invested. It's required to input either this or
-          cashInvested
+        description: Number of stocks invested. It's required to input either this or cashInvested
       cashInvested:
         type: number
         example: 22
-        description: >-
-          Amount of cash invested. It's required to input either this or
-          stocksInvested
+        description: Amount of cash invested. It's required to input either this or stocksInvested
       reinvest:
         type: boolean
         example: false
-        description: >-
-          Flag to indicate whether cash dividends should be reinvested or not.
-          Defaults to false
+        description: Flag to indicate whether cash dividends should be reinvested or not. Defaults to false
       currency:
         type: string
         enum:
@@ -1467,9 +1501,7 @@ definitions:
         type: integer
         format: int64
         example: 10
-        description: >-
-          The total amount of transactions occurring on the Bid in a given
-          interval
+        description: The total amount of transactions occurring on the Bid in a given interval
       change:
         type: number
         example: 0.25
@@ -1490,24 +1522,18 @@ definitions:
       high_price:
         type: number
         example: 19.8
-        description: >-
-          The highest price at which a stock traded during the course of the
-          trading day
+        description: The highest price at which a stock traded during the course of the trading day
       low_price:
         type: number
         example: 19.29
-        description: >-
-          The lowest price at which a stock traded during the course of the
-          trading day
+        description: The lowest price at which a stock traded during the course of the trading day
       market:
         type: string
         example: QSE
       market_cap:
         type: number
         example: 3950000000
-        description: >-
-          The total dollar market value of a company's outstanding shares of
-          stock
+        description: The total dollar market value of a company's outstanding shares of stock
       offer_price:
         type: number
         example: 19.75
@@ -1573,9 +1599,7 @@ definitions:
         type: string
         format: uuid
         example: 0e6880b5-2b83-488b-99c4-e06ea70ef1ac
-        description: >-
-          ID news item category. Not used for creating (should be empty),
-          mandatory when updating
+        description: ID news item category. Not used for creating (should be empty), mandatory when updating
       name:
         type: string
         example: Dividend payment
@@ -1586,9 +1610,7 @@ definitions:
         description: Arabic name of this news item category
       readOnly:
         type: boolean
-        description: >-
-          Field indicating whether this news category can be edited or not. This
-          field is read-only
+        description: Field indicating whether this news category can be edited or not. This field is read-only
     title: NewsItemCategoryDto
   CompanyNewsFeedDto:
     type: object
@@ -1661,7 +1683,7 @@ definitions:
           type: string
       featuredImageUrl:
         type: string
-        example: 'http://at.com/image.png'
+        example: http://at.com/image.png
         description: Featured image URL
       headline:
         type: string
@@ -1734,6 +1756,78 @@ definitions:
         example: 10
         description: Total number of pages by current criteria
     title: PageView«NewsFeedListDto»
+  NewsItemDto:
+    type: object
+    required:
+      - status
+    discriminator: type
+    properties:
+      categories:
+        type: array
+        example:
+          - 9794d1f2-1a84-419c-a149-51d05f70051d
+        description: News item categories' IDs
+        items:
+          type: string
+          format: uuid
+      created:
+        type: string
+        format: date-time
+        description: The time when the news item was created. This value is read-only and is not used while creating/updating news item
+      createdBy:
+        type: string
+        example: John Smith
+        description: Full name of user who created news item. This value is read-only and is not used while creating/updating news item
+      featuredImageUrl:
+        type: string
+        example: http://at.com/image.png
+        description: Featured image URL for the news item
+      id:
+        type: string
+        format: uuid
+        example: ed33f75a-50d0-40a6-a90c-163738292d41
+        description: News item's ID. Not used for creating (should be empty)
+      modified:
+        type: string
+        format: date-time
+        description: The time when the news item was last modified. This value is read-only and is not used while creating/updating news item
+      modifiedBy:
+        type: string
+        example: John Doe
+        description: Full name of user who last modified this news item. This value is read-only and is not used while creating/updating news item
+      published:
+        type: string
+        format: date-time
+        description: The time when the news item was published. If the status is not PUBLISHED it will be null. This value is read-only and is not used while creating/updating news item
+      publishedBy:
+        type: string
+        example: Jane Doe
+        description: Full name of user who published news item. If the status is not PUBLISHED it will be null. This value is read-only and is not used while creating/updating news item
+      publishedDisplay:
+        type: string
+        format: date-time
+        example: '2020-09-07T09:48:52.321Z'
+        description: The time to show as published for this news item. If the status is not PUBLISHED it will be null, regardless of timestamp sent. If not sent, published timestamp will be used
+      status:
+        type: string
+        example: PUBLISHED
+        description: News item's status
+        enum:
+          - DRAFT
+          - READY_FOR_REVIEW
+          - PUBLISHED
+      thumbnailUrl:
+        type: string
+        example: http://at.com/thumbnail.png
+        description: Thumbnail URL for the news item
+      type:
+        type: string
+        enum:
+          - ARTICLE
+          - EXTERNAL_ARTICLE
+          - CORPORATE_NEWS
+          - PRESS_RELEASE
+    title: NewsItemDto
   CompanyListingView:
     type: object
     properties:
@@ -1745,22 +1839,16 @@ definitions:
       exchangeSymbol:
         type: string
         example: QSE
-        description: >-
-          Symbol of the exchange where the company is listed. If the company has
-          not any listing, the value will be null
+        description: Symbol of the exchange where the company is listed. If the company has not any listing, the value will be null
       listingId:
         type: string
         format: uuid
         example: 679ce40e-3bd2-4c02-8964-06a0a9db4123
-        description: >-
-          ID of company listing. If the company has not any listing, the value
-          will be null
+        description: ID of company listing. If the company has not any listing, the value will be null
       listingSymbol:
         type: string
         example: QNBK
-        description: >-
-          Listing symbol of the company. If the company has not any listing, the
-          value will be null
+        description: Listing symbol of the company. If the company has not any listing, the value will be null
       name:
         type: string
         example: Qatar National Bank
