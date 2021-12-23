@@ -8,12 +8,12 @@ info:
   license:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
-host: 'test.api.meds.atnmo.com'
+host: 'api.meds.atnmo.com'
 basePath: /
 securityDefinitions:
   meds_oauth:
     type: oauth2
-    tokenUrl: 'https://test.api.meds.atnmo.com/oauth/token'
+    tokenUrl: 'https://api.meds.atnmo.com/login'
     flow: password
 tags:
   - name: account-value
