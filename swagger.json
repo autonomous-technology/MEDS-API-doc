@@ -1162,7 +1162,7 @@
           "403":{"description":"Forbidden"},
           "404":{"description":"Not Found"}
         },
-        "security":[{"spring_oauth":[]}],"deprecated":false}
+        "security":[{"meds_oauth":[]}],"deprecated":false}
     },
     "/trade-data": {
       "get": {
