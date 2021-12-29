@@ -873,12 +873,23 @@ paths:
           description: Client Credentials in Base64 {client-id}:{client-secret}
           required: true
           type: string
-          x-example: Bearer c2FobWlrX2ZlOmhacTlocXVYdFhGcHR6dVhOWTVudFNuYlhZN0M0enFySnBLYWFIdlR0S3lYYzdtNWJ0
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: '#/definitions/LoginRequest'
+          x-example: Basic c2FobWlrX2FwaV9zdWJzY3JpYmVyOmhacTlocXVYdFhGcHR6dVhOWTVudFNuYlhZN0M0enFySnBLYWFIdlR0S3lYYzdtNWJ0
+        - name: grant_type
+          type: string
+          description: 'Grant type for access token. Supported values are: ''password'', ''refresh_token'''
+          in: formData
+        - name: password
+          type: string
+          description: User's Password. It is required if grant_type is 'password'.
+          in: formData
+        - name: refresh_token
+          type: string
+          description: Refresh Token. It is required if grant_type is 'refresh_token'.
+          in: formData
+        - name: username
+          type: string
+          description: User's Username. It is required if grant_type is 'password'.
+          in: formData
       responses:
         '200':
           description: Login Successful

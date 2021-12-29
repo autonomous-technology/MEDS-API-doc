@@ -1322,12 +1322,32 @@
             "x-example": "Bearer c2FobWlrX2ZlOmhacTlocXVYdFhGcHR6dVhOWTVudFNuYlhZN0M0enFySnBLYWFIdlR0S3lYYzdtNWJ0"
           },
           {
-            "in": "body",
-            "name": "body",
+            "in": "formData",
+            "name": "grant_type",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/LoginRequest"
-            }
+            "type": "string",
+            "description": "Grant type for access token. Supported values are: ''password'', ''refresh_token''"
+          },
+          {
+            "in": "formData",
+            "name": "username",
+            "required": false,
+            "type": "string",
+            "description": "User's Username. It is required if grant_type is 'password'."
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "required": false,
+            "type": "string",
+            "description": "User's Password. It is required if grant_type is 'password'."
+          },
+          {
+            "in": "formData",
+            "name": "refresh_token",
+            "required": false,
+            "type": "string",
+            "description": "Refresh Token. It is required if grant_type is 'refresh_token'."
           }
         ],
         "responses": {
