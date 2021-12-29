@@ -857,6 +857,37 @@ paths:
       security:
         - meds_oauth: []
       deprecated: false
+  /login:
+    post:
+      tags:
+        - authentication
+      summary: User Login
+      operationId: nullUsingPOST
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: Client Credentials in Base64 {client-id}:{client-secret}
+          required: true
+          type: string
+          x-example: Bearer c2FobWlrX2ZlOmhacTlocXVYdFhGcHR6dVhOWTVudFNuYlhZN0M0enFySnBLYWFIdlR0S3lYYzdtNWJ0
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/LoginRequest'
+      responses:
+        '200':
+          description: Login Successful
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/LoginErrorDto'
 definitions:
   AccountDto:
     type: object
@@ -1919,3 +1950,84 @@ definitions:
         example: بنك قطر الوطني
         description: Arabic name of company
     title: CompanyListingView
+  LoginRequest:
+    type: object
+    required:
+      - grant_type
+    properties:
+      grant_type:
+        type: string
+        example: password
+        description: 'Grant type for access token. Supported values are: ''password'', ''refresh_token'''
+      password:
+        type: string
+        example: 1PassworD!
+        description: User's Password. It is required if grant_type is 'password'.
+      refresh_token:
+        type: string
+        example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpX...
+        description: Refresh Token. It is required if grant_type is 'refresh_token'.
+      username:
+        type: string
+        example: example@gmail.com
+        description: User's Email. It is required if grant_type is 'password'.
+    title: LoginRequest
+  LoginResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+        example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV...
+        description: JWT Access Token. Should be used as bearer token when accessing to resources
+      email:
+        type: string
+        example: email@gmail.com
+        description: User's email
+      expires_in:
+        type: integer
+        format: int32
+        example: 3599
+        description: Access Token expiry duration in seconds
+      jti:
+        type: string
+        example: 5-lRKwMUJmR54nIBkrOR_MgEe5Q
+        description: jwt access token id
+      name:
+        type: string
+        example: John Doe
+        description: User Full Name
+      refresh_token:
+        type: string
+        example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXV...
+        description: Refresh Token. Can be used when refreshing access tokens by refresh_token grant_type
+      scope:
+        type: string
+        example: read
+        description: Scope
+      subscription:
+        type: string
+        example: SAHMIK_ANALYST
+        description: Indicates Sahmik Subscription type if this is a registered user
+      token_type:
+        type: string
+        example: bearer
+        description: Token Type
+      user_id:
+        type: string
+        example: 8db6e649-b61c-43bf-9b73-f0d6e9d3d5fb
+        description: User Id
+      verified:
+        type: boolean
+        example: true
+        description: Flag indicated whether user's email verified or not
+    title: LoginResponse
+  LoginErrorDto:
+    type: object
+    properties:
+      error:
+        type: string
+        example: invalid_grant
+      error_description:
+        type: string
+        example: Bad credentials
+    title: LoginErrorDto
